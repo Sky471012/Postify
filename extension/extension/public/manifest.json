@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Postify",
+    "version": "1.0",
+    "description": "Generate AI LinkedIn posts with formatting",
+    "permissions": ["storage", "activeTab", "scripting"],
+    "action": {
+      "default_popup": "index.html",
+      "default_icon": "icon.png"
+    },
+    "background": {
+      "service_worker": "background.js"
+    }
+  }
+  
