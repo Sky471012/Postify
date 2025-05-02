@@ -1,12 +1,90 @@
-# React + Vite
+// useEffectHome.js (React equivalent)
+import { useEffect } from "react";
+import GLightbox from "glightbox";
+import WOW from "wowjs";
+import counterUp from "counterup2";
+import "glightbox/dist/css/glightbox.css";
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+export default function useHomeEffects() {
+  useEffect(() => {
+    // ==== Preloader
+    const fadeout = () => {
+      const preloader = document.querySelector(".preloader");
+      if (preloader) {
+        preloader.style.opacity = "0";
+        preloader.style.display = "none";
+      }
+    };
+    window.onload = () => setTimeout(fadeout, 500);
 
-Currently, two official plugins are available:
+    
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+    // Lightbox
+    GLightbox({
+      href: "https://www.youtube.com/watch?v=r44RKWyfcFw",
+      type: "video",
+      source: "youtube",
+      width: 900,
+      autoplayVideos: true,
+    });
 
-## Expanding the ESLint configuration
+    // Counter
+    const cu = new counterUp({
+      start: 0,
+      duration: 2000,
+      intvalues: true,
+      interval: 100,
+      append: "k",
+    });
+    document.querySelectorAll(".counter").forEach((el) => cu.start(el));
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+    // WOW animation
+    new WOW.WOW().init();
+
+    // Particles
+    const loadParticles = (id) => {
+      if (!document.getElementById(id)) return;
+      particlesJS(id, {
+        particles: {
+          number: {
+            value: 40,
+            density: {
+              enable: true,
+              value_area: 4000,
+            },
+          },
+          color: { value: ["#FFFFFF"] },
+          shape: { type: "circle" },
+          opacity: {
+            value: 0.15,
+            random: true,
+            anim: { enable: true, speed: 0.2, opacity_min: 0.15 },
+          },
+          size: {
+            value: 50,
+            random: true,
+            anim: { enable: true, speed: 2, size_min: 5 },
+          },
+          line_linked: { enable: false },
+          move: { enable: true, speed: 1, direction: "top", random: true },
+        },
+        interactivity: {
+          detect_on: "canvas",
+          events: {
+            onhover: { enable: false },
+            onclick: { enable: false },
+            resize: true,
+          },
+        },
+        retina_detect: true,
+      });
+    };
+    loadParticles("particles-1");
+    loadParticles("particles-2");
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+}
