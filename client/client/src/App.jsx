@@ -5,7 +5,7 @@ import './App.css'
 
 export default function App() {
   return (
-    <Home/>
-    // <Dashboard/>
+    // <Home/>
+    <Dashboard/>
   )
 }

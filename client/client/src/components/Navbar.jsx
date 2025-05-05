@@ -122,7 +122,7 @@ export default function Navbar() {
                   href="https://uideck.com/templates/basic/"
                   rel="nofollow"
                 >
-                  Login / Signup
+                  Go to Dashboard
                 </a>
               </div>
             </nav>
