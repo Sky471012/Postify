@@ -3,13 +3,37 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // Immediately acknowledge receipt of message to keep connection alive
     sendResponse({ received: true });
     
-    // Then handle the async operation
-    fetch('http://localhost:5000/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: request.prompt })
+    // Add logging to help debug the request
+    console.log("Sending request to backend with prompt:", request.prompt);
+    
+    // Check if server is reachable first
+    fetch('http://localhost:5000/', { 
+      method: 'GET',
+      mode: 'cors'
     })
-    .then(res => res.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Server health check failed: ${response.status}`);
+      }
+      console.log("Server is reachable, proceeding with post generation");
+      
+      // Then handle the actual post generation request
+      return fetch('http://localhost:5000/api/generate', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify({ prompt: request.prompt })
+      });
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`API request failed with status: ${res.status}`);
+      }
+      return res.json();
+    })
     .then(data => {
       if (data && data.generatedPost) {
         console.log("Success - generated post:", data.generatedPost);
@@ -22,7 +46,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.error("Invalid response:", data);
         chrome.tabs.sendMessage(sender.tab.id, { 
           action: 'postGenerationFailed', 
-          error: 'Invalid server response' 
+          error: data.error || 'Invalid server response' 
         });
       }
     })
