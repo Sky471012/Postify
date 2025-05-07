@@ -155,7 +155,6 @@ p {
 }
 
 .main-btn:hover {
-  color: #fff;
   background-position: right center;
 }
 
@@ -393,7 +392,6 @@ p {
 }
 
 .navbar-btn .main-btn:hover {
-  color: #fff;
   background-position: right center;
 }
 

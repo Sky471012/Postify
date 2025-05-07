@@ -20,5 +20,11 @@
   ],
   "icons": {
     "128": "icon.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["src/assets/logo.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
