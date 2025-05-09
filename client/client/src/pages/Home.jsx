@@ -52,11 +52,10 @@ useEffect(() => {
   
   return (<>
     {/* <!--====== HEADER PART START ======--> */}
-    <header className="header-area">
+    <header id="home" className="header-area">
       <Navbar/>
 
       <div
-      id="home"
       className="header-hero bg_cover"
       style={{ backgroundImage: `url(${backgroundImg})` }}
       >
@@ -66,8 +65,8 @@ useEffect(() => {
               <div className="col-lg-8">
                 <div className="header-hero-content text-center">
                   <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-                    <div className="mb-3" style={{display: "flex", alignContent: "center"}}>
-                      <img src={logo1} style={{height: "70px"}} alt=""/>
+                    <div className="mb-3" style={{display: "flex", alignItems: "center", gap:"6px"}}>
+                      <img src={logo1} style={{height: "80px"}} alt=""/>
                       <h1 style={{color: "white", fontSize: "70px", fontWeight:"bolder"}}>
                         Postify
                       </h1>

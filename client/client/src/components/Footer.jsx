@@ -26,7 +26,7 @@ export default function Footer() {
           <div className="col-lg-4 col-md-6 col-sm-8">
             <div className="footer-about mt-50">
               <div className="logo" >
-                <div style={{display: "flex", flexDirection: "row"}}>
+                <div style={{display: "flex", flexDirection: "row", gap:"5px"}}>
                   <img src={logo1} alt="logo" />
                   <h3>Postify</h3>
                 </div>

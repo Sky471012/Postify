@@ -21,14 +21,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const postBox = document.querySelector('[contenteditable="true"][role="textbox"]');
     
     if (postBox) {
+      postBox.innerHTML = '';
       postBox.focus();
       insertTextIntoContentEditable(postBox, generatedPost);
       
       // Re-enable the button
       const button = document.querySelector('#postify-generate-btn');
-      if (button) {
+      const input = document.querySelector('#postify-input');
+      if (button && input) {
         button.disabled = false;
         button.textContent = '↑';
+        input.placeholder = 'Generate with Postify......';
       }
     } else {
       alert('Could not find the LinkedIn post area.');
@@ -108,6 +111,7 @@ waitForElement('[class="share-creation-state__additional-toolbar share-creation-
     button.disabled = true;
     button.textContent = '→';
     input.value="";
+    input.placeholder = 'Generating......';
     
     // Send message to background script
     chrome.runtime.sendMessage(
@@ -119,6 +123,7 @@ waitForElement('[class="share-creation-state__additional-toolbar share-creation-
           console.error("No response from background script");
           button.disabled = false;
           button.textContent = '↑';
+          input.placeholder = 'Generate with Postify......';
           alert('Error: Could not communicate with backend. Check console for details.');
         }
       }

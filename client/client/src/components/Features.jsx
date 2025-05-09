@@ -29,7 +29,7 @@ export default function Features() {
 
   return (<>
     {/* <!--====== SERVICES PART START ======--> */}
-    <section id="features" className="services-area pt-120">
+    <section id="features" className="services-area pt-5">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-10">

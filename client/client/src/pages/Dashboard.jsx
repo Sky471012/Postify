@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import logo1 from "../assets/images/logo-1.png";
 import pfp from "../assets/images/pfp.jpg";
+import { Link } from "react-router";
 
 export default function Dashboard() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -21,8 +22,8 @@ export default function Dashboard() {
 
       {/* Sidebar */}
       {showSidebar && (
-        <div className="side-bar text-white flex-column text-center">
-          <div className='p-3' style={{display: "flex", flexDirection: "row", height:"80px"}}>
+        <div className="side-bar text-white flex-column">
+          <div className='p-3' style={{display: "flex", flexDirection: "row", height:"80px", gap:"6px", margin:"0 10px", justifyContent:"space-around"}}>
             <img src={logo1} className='logo' alt="logo" />
             <h3 style={{fontSize: "40px", color:"white"}}>Postify</h3>
           </div>
@@ -34,9 +35,9 @@ export default function Dashboard() {
               <img src={pfp} alt="img" className="profile-photo" />
               <h5 className='mt-3'>Aakash Sharma</h5>
             </div>
-            <ul className="flex-column mt-3 p-3 text-start">
+            <ul className="flex-column mt-5 text-start">
               <li className="nav-item mb-3">
-                <a className="nav-link " href="#"><i className="bi bi-house-door me-1"></i>Home</a>
+                <Link className="nav-link " to="/"><i className="bi bi-house-door me-1"></i>Home</Link>
               </li>
               <li className="nav-item mb-3">
                 <a className="nav-link " href="#"><i className="bi bi-linkedin me-2"></i>Go to Linkedin</a>
@@ -45,6 +46,7 @@ export default function Dashboard() {
                 <a className="nav-link" href="#"><i className="bi bi-box-arrow-right me-1"></i> Logout</a>
               </li>
             </ul>
+            <span><b>© sky</b></span>
           </div>
         
         </div>
@@ -56,6 +58,7 @@ export default function Dashboard() {
         {/* top-bar */}
         <div className="top-bar">
               <div className="search-bar">
+                <i class="bi bi-search"></i>
                 <input type="text" placeholder="Search your post..." value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
               </div>
 
@@ -174,7 +177,7 @@ export default function Dashboard() {
 
                   <h5>Post Content:</h5>
                   <p className="text">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                   </p>
                 </div>
               </div>

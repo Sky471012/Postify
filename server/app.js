@@ -1,9 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const AuthRoutes = require('./routes/Auth.routes.js');
+const mongoDB = require("./db");
 const prompt_template = require('./prompt.js');
+require('dotenv').config();
 
 const app = express();
+
+mongoDB();
+
+app.use('/api/linkedin', AuthRoutes)
 
 // Configure CORS to allow requests from Chrome extension
 app.use(cors({

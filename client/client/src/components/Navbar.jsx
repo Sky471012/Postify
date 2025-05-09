@@ -2,6 +2,18 @@ import React, { useEffect } from "react";
 import logo1 from "../assets/images/logo-1.png";
 
 export default function Navbar() {
+
+  const handleLongin=()=>{
+    const params = new URLSearchParams({
+      response_type: "code",
+      client_id: "864awrzg25madc",
+      redirect_uri: 'http://localhost:5000/api/linkedin/callback',
+      scope: 'openid email profile w_member_social',
+    })
+
+    window.location.href=`https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`;
+  }
+
   useEffect(() => {
     const handleScroll = () => {
       const header_navbar = document.querySelector(".navbar-area");
@@ -67,7 +79,7 @@ export default function Navbar() {
         <div className="row">
           <div className="col-lg-12">
             <nav className="navbar navbar-expand-lg">
-              <div className="navbar-brand" style={{ display: "flex", alignContent:"center"}}>
+              <div className="navbar-brand" style={{ display: "flex", alignContent:"center", gap:"4px"}}>
                 <img src={logo1} alt="Logo" />
                 <h3 style={{color: "white", fontWeight:"bolder"}}>
                   Postify
@@ -116,14 +128,14 @@ export default function Navbar() {
               </div>
 
               <div className="navbar-btn d-none d-sm-inline-block">
-                <a
+                <button
                   className="main-btn"
                   data-scroll-nav="0"
-                  href="https://uideck.com/templates/basic/"
+                  onClick={handleLongin}
                   rel="nofollow"
                 >
                   Go to Dashboard
-                </a>
+                </button>
               </div>
             </nav>
           </div>
