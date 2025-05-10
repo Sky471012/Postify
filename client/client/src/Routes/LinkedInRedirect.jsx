@@ -31,7 +31,7 @@ const LinkedInRedirect = () => {
     } else {
       // If no name param exists, redirect to login page
       if (window.location.pathname === "/linkedin-redirect") {
-        navigate("/login", { replace: true });
+        navigate("/", { replace: true });
       }
     }
   }, [navigate, setUserData]);

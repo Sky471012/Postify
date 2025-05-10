@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useUser } from "../context/UserContext";
 import logo1 from "../assets/images/logo-1.png";
 import pfp from "../assets/images/pfp.jpg";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -12,6 +13,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log("Dashboard mounted");
     // Simulate loading state (if necessary)
     if (user) {
       setIsLoading(false);
@@ -83,7 +85,7 @@ export default function Dashboard() {
         {/* top-bar */}
         <div className="top-bar">
               <div className="search-bar">
-                <i class="bi bi-search"></i>
+                <i className="bi bi-search"></i>
                 <input type="text" placeholder="Search your post..." value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
               </div>
 

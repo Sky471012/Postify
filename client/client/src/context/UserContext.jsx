@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext } from "react";
 
 // Create a context with a default value of null
 const UserContext = createContext(null);
