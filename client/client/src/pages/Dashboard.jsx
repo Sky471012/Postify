@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo1 from "../assets/images/logo-1.png";
 import pfp from "../assets/images/pfp.jpg";
 import { Link } from "react-router";
@@ -6,6 +6,31 @@ import { Link } from "react-router";
 export default function Dashboard() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [search, setSearch] = useState('');
+
+
+  const { user } = useUser(); // Access the user data from context
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading state (if necessary)
+    if (user) {
+      setIsLoading(false);
+    } else {
+      // If user is not available in the context, check localStorage as fallback
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setIsLoading(false);
+      }
+    }
+  }, [user]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!user) {
+    return <p>User data is not available. Please log in.</p>;
+  }
 
 
   return (<>
@@ -32,8 +57,8 @@ export default function Dashboard() {
 
 
             <div className="profile pt-5">
-              <img src={pfp} alt="img" className="profile-photo" />
-              <h5 className='mt-3'>Aakash Sharma</h5>
+              <img src={user.picture} alt="img" className="profile-photo" />
+              <h5 className='mt-3'>{user.name}</h5>
             </div>
             <ul className="flex-column mt-5 text-start">
               <li className="nav-item mb-3">

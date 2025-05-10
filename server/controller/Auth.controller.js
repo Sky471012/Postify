@@ -48,8 +48,13 @@ const linkedinCallback = async (req, res) => {
     const accessToken = await getAccessToken(code);
 
     const userData = await getUserData(accessToken.access_token);
+    const name = userData.name;
+    const picture = userData.picture;
 
-    res.status(200).json({ userData });
+    // ✅ Redirect to your frontend with query params
+    return res.redirect(
+      `http://localhost:5173/linkedin-redirect?name=${encodeURIComponent(name)}&picture=${encodeURIComponent(picture)}`
+    );
   } catch (error) {
     res.status(500).json({
       error: error.message || "Unknown error",
