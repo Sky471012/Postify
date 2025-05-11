@@ -32,28 +32,51 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           
           const userNameElement = document.querySelector('.text-body-large-bold.truncate');
           const userName = userNameElement.textContent.trim();
+          
+          const postElement = document.querySelector('[role="textbox"]');
+          const post = postElement.querySelector('p');
+          const postContent = post.textContent.trim();
+
 
           fetch(`http://localhost:5000/api/users/exists?name=${encodeURIComponent(userName)}`)
           .then(res => res.json())
           .then(data => {
             if (data.exists) {
-              console.log('User already exists:', data.user);
+              console.log('User already exists, adding post...');
+
+              // Add post to existing user
+              fetch('http://localhost:5000/api/users/add-post', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  name: userName,
+                  post: postContent
+                })
+              })
+                .then(res => res.json())
+                .then(data => console.log('Post added to user:', data))
+                .catch(err => console.error('Error adding post:', err));
+
             } else {
-              // Step 2: Create user if not exists
+              // Create new user with post
               fetch('http://localhost:5000/api/users/create', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name: userName })
+                body: JSON.stringify({
+                  name: userName,
+                  post: postContent
+                })
               })
                 .then(res => res.json())
-                .then(data => console.log('User created:', data))
-                .catch(err => console.error('Error creating user:', err));
+                .then(data => console.log('User created!'))
+                .catch(err => console.error('Error creating user!'));
             }
           })
           .catch(err => console.error('Error checking user existence:', err));
-
         });
       }
       observer.disconnect();
