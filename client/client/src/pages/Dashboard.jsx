@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useUser } from "../context/UserContext";
 import logo1 from "../assets/images/logo-1.png";
-import pfp from "../assets/images/pfp.jpg";
+import reactions from "../assets/images/reactions.png";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
@@ -67,7 +67,7 @@ export default function Dashboard() {
                 <Link className="nav-link " to="/"><i className="bi bi-house-door me-1"></i>Home</Link>
               </li>
               <li className="nav-item mb-3">
-                <a className="nav-link " href="#"><i className="bi bi-linkedin me-2"></i>Go to Linkedin</a>
+                <a className="nav-link " href="https://www.linkedin.com/"><i className="bi bi-linkedin me-2"></i>Go to Linkedin</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#"><i className="bi bi-box-arrow-right me-1"></i> Logout</a>
@@ -113,10 +113,9 @@ export default function Dashboard() {
                   <div className="post">
 
                     <div className="profile">
-                      <img className='profile-preview-img' src={pfp} alt="img"/>
+                      <img className='profile-preview-img' src={user.picture} alt="img"/>
                       <div className="name">
-                        <span style={{fontSize: "1rem", fontWeight: "bold"}}>Aakash Sharma</span>
-                        <span>MSIT '27</span>
+                        <span style={{fontSize: "1rem", fontWeight: "bold"}}>{user.name}</span>
                         <div style={{display: "flex", flexDirection: "row"}}>
                           <span>Now</span>
                           <div className="dot"></div>
@@ -132,12 +131,12 @@ export default function Dashboard() {
                     </div>
 
                     <div className="reaction">
-                      <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "10px"}}>
-                        <img src={pfp} alt="sky" className="reactions"/>
-                        <span>Udit Bhatia and 79 others</span>
+                      <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "4px"}}>
+                        <img src={reactions} alt="sky" className="reactions"/>
+                        <span>Aakash Sharma and 79 others</span>
                       </div>
                       <div className="comments">
-                          <span>10 comments</span>
+                          <span>20 comments</span>
                           <div className="dot"></div>
                           <span>3 reposts</span>
                       </div>
