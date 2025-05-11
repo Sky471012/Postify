@@ -19,6 +19,40 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'postGenerated') {
     const generatedPost = message.generatedPost;
     const postBox = document.querySelector('[contenteditable="true"][role="textbox"]');
+
+    //finding post button
+    const selector = '.share-actions__primary-action.artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view'
+    const observer = new MutationObserver(() => {
+      const targetElement = document.querySelector(selector);
+
+      if (targetElement) {
+        
+        console.log("hi");
+
+        targetElement.addEventListener('click', () => {
+          
+            fetch('http://localhost:5000/api/users/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: 'Anurag Thakur',
+            })
+          })
+          .then(res => res.json())
+          .then(data => console.log('User created:', data))
+          .catch(err => console.error('Error creating user:', err));
+
+        });
+      }
+      observer.disconnect();
+    
+    })
+    observer.observe(document.body, { childList: true, subtree: true });
+
+
+
     
     if (postBox) {
       postBox.innerHTML = '';
@@ -44,10 +78,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const button = document.querySelector('#postify-generate-btn');
     if (button) {
       button.disabled = false;
-      button.textContent = 'Generate';
+      button.textContent = '↑';
+      input.placeholder = 'Generate with Postify......';
     }
   }
 });
+
 
 // Inject Postify UI next to LinkedIn's detour button
 waitForElement('[class="share-creation-state__additional-toolbar share-creation-state__additional-toolbar--no-padding"]', (targetElement) => {

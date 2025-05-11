@@ -1,13 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const AuthRoutes = require('./routes/Auth.routes.js');
+const mongoose = require('mongoose');
+const userRoutes = require('./routes/CreateUser.js');
 const mongoDB = require("./db");
 const prompt_template = require('./prompt.js');
 require('dotenv').config();
 
 const app = express();
-
-mongoDB();
 
 app.use('/api/linkedin', AuthRoutes)
 
@@ -24,6 +24,9 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Postify backend running' });
 });
+
+app.use('/api/users', userRoutes);
+mongoDB();
 
 app.post('/api/generate', async (req, res) => {
   try {
