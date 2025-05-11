@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const AuthRoutes = require('./routes/Auth.routes.js');
 const mongoose = require('mongoose');
-const userRoutes = require('./routes/CreateUser.js');
 const mongoDB = require("./db");
+const userRoutes = require('./routes/CreateUser.js');
+const User = require('./Models/User.js');
 const prompt_template = require('./prompt.js');
 require('dotenv').config();
 
@@ -25,8 +26,23 @@ app.get('/', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Postify backend running' });
 });
 
-app.use('/api/users', userRoutes);
 mongoDB();
+app.use('/api/users', userRoutes);
+app.get('/api/users/exists', async (req, res) => {
+  const { name } = req.query;
+
+  try {
+    const user = await User.findOne({ name });
+    if (user) {
+      return res.json({ exists: true, user });
+    } else {
+      return res.json({ exists: false });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 app.post('/api/generate', async (req, res) => {
   try {
