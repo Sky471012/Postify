@@ -769,12 +769,12 @@ p {
   background-color: #1d2430;
   height: 100vh;
   position: fixed;
+  border-right: 1px solid #fe7a7b;
 }
 
 .side-bar-container{
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #fe7a7b;
   height: 100%;
   padding: 10px;
 }
@@ -824,18 +824,6 @@ p {
   }
 }
 
-
-.top-bar{
-  height: 80px;
-  background-color: #1d2430;
-  width: 100%;
-  position: fixed;
-  z-index: 1;
-  border-bottom: 1px solid #fe7a7b;
-  display: flex;
-  flex-direction: column;
-}
-
 .search-bar{
   display: flex;
   background-color: black;
@@ -843,8 +831,10 @@ p {
   border-radius: 30px;
   padding: 6px 15px;
   color: #d2d2d2;
-  width: 35%;
-  margin: auto 330px;
+  width: 200px;
+  margin: 20px;
+  position: fixed;
+  right: 0px;
 }
 
 .search-bar input{
@@ -856,14 +846,12 @@ p {
 }
 
 .single-post {
-  width: 500px;
   background-color: #1d2430;
   -webkit-transition: all 0.3s ease-out 0s;
   transition: all 0.3s ease-out 0s;
-  padding:  20px;
+  padding: 30px 20px;
   border: 2px solid transparent;
   border-radius: 8px;
-  min-height: 500px;
   margin: 10px;
 }
 

@@ -1,54 +1,55 @@
 import { useState, useEffect } from 'react';
-import { useUser } from "../context/UserContext";
 import logo1 from "../assets/images/logo-1.png";
-import reactions from "../assets/images/reactions.png";
+import pfp from "../assets/images/pfp.jpg";
 import { Link } from "react-router-dom";
+import PreviousPosts from '../components/PreviousPosts';
+import { useUser } from "../context/UserContext";
 
 export default function Dashboard() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [search, setSearch] = useState('');
 
-
   const { user } = useUser(); // Access the user data from context
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    console.log("Dashboard mounted");
-    // Simulate loading state (if necessary)
-    if (user) {
-      setIsLoading(false);
-    } else {
-      // If user is not available in the context, check localStorage as fallback
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        setIsLoading(false);
-      }
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   console.log("Dashboard mounted");
+  //   // Simulate loading state (if necessary)
+  //   if (user) {
+  //     setIsLoading(false);
+  //   } else {
+  //     // If user is not available in the context, check localStorage as fallback
+  //     const storedUser = localStorage.getItem("user");
+  //     if (storedUser) {
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // }, [user]);
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+  // if (isLoading) {
+  //   return <p>Loading...</p>;
+  // }
 
-  if (!user) {
-    return <p>User data is not available. Please log in.</p>;
-  }
+  // if (!user) {
+  //   return <p>User data is not available. Please post some generated posts first.</p>;
+  // }
+
 
 
   return (<>
 
   <div className="d-flex">
       {/* Toggle Button */}
-      <button
+      {/* <button
         className="btn btn-outline-dark m-3 d-md-none"
         onClick={() => setShowSidebar(!showSidebar)}
         style={{ zIndex: 1000 }}
       >
         <i className={`bi ${showSidebar ? 'bi-x-lg' : 'bi-list'}`}></i>
-      </button>
+      </button> */}
 
       {/* Sidebar */}
-      {showSidebar && (
+      {/* {showSidebar && (
         <div className="side-bar text-white flex-column">
           <div className='p-3' style={{display: "flex", flexDirection: "row", height:"80px", gap:"6px", margin:"0 10px", justifyContent:"space-around"}}>
             <img src={logo1} className='logo' alt="logo" />
@@ -59,8 +60,8 @@ export default function Dashboard() {
 
 
             <div className="profile pt-5">
-              <img src={user.picture} alt="img" className="profile-photo" />
-              <h5 className='mt-3'>{user.name}</h5>
+              <img src={pfp} alt="img" className="profile-photo" />
+              <h5 className='mt-3'>Pizza Bhateja</h5>
             </div>
             <ul className="flex-column mt-5 text-start">
               <li className="nav-item mb-3">
@@ -77,144 +78,21 @@ export default function Dashboard() {
           </div>
         
         </div>
-      )}
+      )} */}
 
       {/* Main Content */}
-      <div className="flex-grow-1 text-center" style={{ marginLeft: showSidebar ? 250 : 0 }}>
+ 
+      <div className="flex-grow-1 text-center mb-5" >
         
-        {/* top-bar */}
-        <div className="top-bar">
               <div className="search-bar">
                 <i className="bi bi-search"></i>
                 <input type="text" placeholder="Search your post..." value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
               </div>
 
-        </div>
 
+        <PreviousPosts name="Pizza Bhateja" picture={pfp}/>
 
-        <h1 className='mt-5 m-3 pt-5'>Your Previous Posts </h1>
-        {/* <!-- row --> */}
-          <div className="row ms-5">
-                
-              
-            <div className="col-lg-6 col-md-7 col-sm-8">
-            <div className="single-post mt-30">
-
-              <div className="date">
-              <span style={{fontWeight:"normal", color:"white"}}>Posted on:</span>
-                  <h5 className="post-title" style={{fontWeight:"normal"}}>
-                    22 May, 2024
-                  </h5>
-
-                  <div className="line"></div>
-              </div>
-              
-            
-                  <div className="post">
-
-                    <div className="profile">
-                      <img className='profile-preview-img' src={user.picture} alt="img"/>
-                      <div className="name">
-                        <span style={{fontSize: "1rem", fontWeight: "bold"}}>{user.name}</span>
-                        <div style={{display: "flex", flexDirection: "row"}}>
-                          <span>Now</span>
-                          <div className="dot"></div>
-                          <i className="bi bi-globe-central-south-asia"></i>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="content">
-                      <div className="text-preview" id="postPreview">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                      </div>
-                    </div>
-
-                    <div className="reaction">
-                      <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "4px"}}>
-                        <img src={reactions} alt="sky" className="reactions"/>
-                        <span>Aakash Sharma and 79 others</span>
-                      </div>
-                      <div className="comments">
-                          <span>20 comments</span>
-                          <div className="dot"></div>
-                          <span>3 reposts</span>
-                      </div>
-                    </div>
-
-                    <div className="horizontal-line"></div>
-
-                    <div className="react">
-                      <div className="react-type">
-                        <i className="bi bi-hand-thumbs-up flip-horizontal"></i>
-                        <span>Like</span>
-                      </div>
-                      <div className="react-type">
-                        <i className="bi bi-chat"></i>
-                        <span>Comment</span>
-                      </div>
-                      <div className="react-type">
-                        <i className="bi bi-chat"></i>
-                        <span>Share</span>
-                      </div>
-                      <div className="react-type">
-                        <i className="bi bi-send"></i>
-                        <span>Send</span>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              
-              {/* <!-- single post --> */}
-            
-            </div>
-
-            <div className="col-lg-5 col-md-7 col-sm-8">
-              <div className="single-post mt-30">
-                
-                <div className="post-content">
-                  <span style={{fontWeight:"normal", color:"white"}}>Posted on:</span>
-                  <h5 className="post-title" style={{fontWeight:"normal"}}>
-                    22 May, 2024
-                  </h5>
-
-                  <div className="line"></div>
-
-                  <h5>Post Content:</h5>
-                  <p className="text">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  </p>
-                </div>
-              </div>
-              
-              {/* <!-- single post --> */}
-            </div>
-            <div className="col-lg-5 col-md-7 col-sm-8">
-              <div className="single-post mt-30">
-                
-                <div className="post-content">
-                  <span style={{fontWeight:"normal", color:"white"}}>Posted on:</span>
-                  <h5 className="post-title" style={{fontWeight:"normal"}}>
-                    22 May, 2024
-                  </h5>
-
-                  <div className="line"></div>
-
-                  <h5>Post Content:</h5>
-                  <p className="text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  </p>
-                </div>
-              </div>
-              
-              {/* <!-- single post --> */}
-            </div>
-            
-
-            
-          </div>
-          {/* <!-- row --> */}
+        
       </div>
     </div>
   </>)
