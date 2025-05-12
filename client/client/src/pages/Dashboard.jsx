@@ -6,8 +6,8 @@ import PreviousPosts from '../components/PreviousPosts';
 import { useUser } from "../context/UserContext";
 
 export default function Dashboard() {
+
   const [showSidebar, setShowSidebar] = useState(true);
-  const [search, setSearch] = useState('');
 
   const { user } = useUser(); // Access the user data from context
   const [isLoading, setIsLoading] = useState(true);
@@ -39,19 +39,12 @@ export default function Dashboard() {
   return (<>
 
   <div className="d-flex">
-      {/* Toggle Button */}
-      {/* <button
-        className="btn btn-outline-dark m-3 d-md-none"
-        onClick={() => setShowSidebar(!showSidebar)}
-        style={{ zIndex: 1000 }}
-      >
-        <i className={`bi ${showSidebar ? 'bi-x-lg' : 'bi-list'}`}></i>
-      </button> */}
+ 
 
       {/* Sidebar */}
-      {/* {showSidebar && (
-        <div className="side-bar text-white flex-column">
-          <div className='p-3' style={{display: "flex", flexDirection: "row", height:"80px", gap:"6px", margin:"0 10px", justifyContent:"space-around"}}>
+
+        <div className="side-bar">
+          <div style={{display: "flex", flexDirection: "row", margin:"10px 0", gap:"6px", justifyContent:"space-between"}}>
             <img src={logo1} className='logo' alt="logo" />
             <h3 style={{fontSize: "40px", color:"white"}}>Postify</h3>
           </div>
@@ -59,11 +52,11 @@ export default function Dashboard() {
           <div className='side-bar-container'>
 
 
-            <div className="profile pt-5">
+            <div className="profile pt-3">
               <img src={pfp} alt="img" className="profile-photo" />
               <h5 className='mt-3'>Pizza Bhateja</h5>
             </div>
-            <ul className="flex-column mt-5 text-start">
+            <ul className="flex-column mt-5">
               <li className="nav-item mb-3">
                 <Link className="nav-link " to="/"><i className="bi bi-house-door me-1"></i>Home</Link>
               </li>
@@ -78,16 +71,13 @@ export default function Dashboard() {
           </div>
         
         </div>
-      )} */}
+
 
       {/* Main Content */}
  
-      <div className="flex-grow-1 text-center mb-5" >
+      <div className="flex-grow-1 text-center mb-5 main-content">
         
-              <div className="search-bar">
-                <i className="bi bi-search"></i>
-                <input type="text" placeholder="Search your post..." value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
-              </div>
+              
 
 
         <PreviousPosts name="Pizza Bhateja" picture={pfp}/>

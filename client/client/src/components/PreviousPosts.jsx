@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import reactions from "../assets/images/reactions.png";
 
 export default function PreviousPosts(props) {
+    const [search, setSearch] = useState('');
+
     const userName = props.name;
     const userPicture = props.picture;
 
@@ -39,6 +41,12 @@ export default function PreviousPosts(props) {
     };
 
   return (<>
+
+    <div className="search-bar">
+      <i className="bi bi-search"></i>
+      <input type="text" placeholder="Search your post..." value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
+    </div>
+
     <h1 className='mt-5 m-3 pt-5'>Your Previous Posts</h1>
 
     <div className="row justify-content-center">
@@ -83,7 +91,7 @@ export default function PreviousPosts(props) {
                           onClick={() => toggleExpand(index)}
                           style={{ color: "#0073b1", cursor: "pointer", marginLeft: "5px" }}
                         >
-                          {isExpanded ? " Read Less" : " Read More"}
+                          {isExpanded ? " read less" : " read more"}
                         </span>
                       )}
                     </div>
