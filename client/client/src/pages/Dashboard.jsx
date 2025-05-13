@@ -4,10 +4,15 @@ import pfp from "../assets/images/pfp.jpg";
 import { Link } from "react-router-dom";
 import PreviousPosts from '../components/PreviousPosts';
 import { useUser } from "../context/UserContext";
+import { FaBars, FaTimes } from 'react-icons/fa';
 
 export default function Dashboard() {
 
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
 
   const { user } = useUser(); // Access the user data from context
   const [isLoading, setIsLoading] = useState(true);
@@ -43,33 +48,52 @@ export default function Dashboard() {
 
       {/* Sidebar */}
 
-        <div className="side-bar">
-          <div style={{display: "flex", flexDirection: "row", margin:"10px 0", gap:"6px", justifyContent:"space-between"}}>
-            <img src={logo1} className='logo' alt="logo" />
-            <h3 style={{fontSize: "40px", color:"white"}}>Postify</h3>
+        <div className={`sidebar ${isOpen ? 'open' : 'collapsed'}`}>
+          <div className="sidebar-header">
+            {/* <h3>{isOpen ?'' : ''}</h3> */}
+            <button className="sidebar-toggle" onClick={toggleSidebar}>
+              {isOpen ? <FaTimes /> : <FaBars />}
+            </button>
           </div>
-
-          <div className='side-bar-container'>
-
-
-            <div className="profile pt-3">
-              <img src={pfp} alt="img" className="profile-photo" />
-              <h5 className='mt-3'>Pizza Bhateja</h5>
-            </div>
-            <ul className="flex-column mt-5">
-              <li className="nav-item mb-3">
-                <Link className="nav-link " to="/"><i className="bi bi-house-door me-1"></i>Home</Link>
-              </li>
-              <li className="nav-item mb-3">
-                <a className="nav-link " href="https://www.linkedin.com/"><i className="bi bi-linkedin me-2"></i>Go to Linkedin</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#"><i className="bi bi-box-arrow-right me-1"></i> Logout</a>
-              </li>
-            </ul>
-            <span><b>© sky</b></span>
+          
+          <div style={{display: "flex", flexDirection: "row", margin:"15px 17px 0", gap:"6px"}}>
+            <img src={logo1} className='logo tooltip-icon' alt="logo" />
+            {isOpen && <h3 style={{fontSize: "40px", color:"white", marginBottom:"0"}}>Postify</h3>}
           </div>
-        
+  
+          <ul className="sidebar-menu">
+            <li>
+              <Link className="menu-item" to={"/"}>
+                <i className="bi bi-house-fill"></i>
+                {isOpen && <span className="menu-text">Home</span>}
+              </Link>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/" className="menu-item">
+                <i className="bi bi-linkedin"></i>
+                {isOpen && <span className="menu-text">Linkedin</span>}
+              </a>
+            </li>
+            <li>
+              <a href="#" className="menu-item">
+                <i className="bi bi-door-open-fill"></i>
+                {isOpen && <span className="menu-text">Logout</span>}
+              </a>
+            </li>
+            
+          </ul>
+          <div className="profile-section">
+            <img
+              className="profile-picture"
+              src={pfp}
+              alt="Profile"
+            />
+            {isOpen && (
+              <div className="profile-details">
+                <h5 className="profile-name">Pizza Bhateja</h5>
+              </div>
+            )}
+          </div>
         </div>
 
 
