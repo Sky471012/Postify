@@ -44,14 +44,19 @@ export default function PreviousPosts(props) {
 
     <div className="search-bar">
       <i className="bi bi-search"></i>
-      <input type="text" placeholder="Search your post..." value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
+      <input type="search" placeholder="Search your post..." aria-label="Search" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
     </div>
 
     <h1 className='mt-5 m-3 pt-5'>Your Previous Posts</h1>
 
     <div className="row justify-content-center">
       {user.post && user.post.length > 0 ? (
-        user.post.map((post, index) => {
+        user.post
+        .filter((post) => 
+          typeof post?.content === 'string' && 
+          post.content.toLowerCase().includes(search.toLowerCase())
+        )
+        .map((post, index) => {
           const isExpanded = expandedPosts[index];
           const preview = post.content.length > 142
             ? post.content.slice(0, 142) + '...'

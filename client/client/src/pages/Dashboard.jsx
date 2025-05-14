@@ -56,7 +56,7 @@ export default function Dashboard() {
             </button>
           </div>
           
-          <div style={{display: "flex", flexDirection: "row", margin:"15px 17px 0", gap:"6px"}}>
+          <div style={{display: "flex", flexDirection: "row", margin:"15px 15px 0", gap:"6px"}}>
             <img src={logo1} className='logo tooltip-icon' alt="logo" />
             {isOpen && <h3 style={{fontSize: "40px", color:"white", marginBottom:"0"}}>Postify</h3>}
           </div>
@@ -90,7 +90,7 @@ export default function Dashboard() {
             />
             {isOpen && (
               <div className="profile-details">
-                <h5 className="profile-name">Pizza Bhateja</h5>
+                <h5 className="profile-name">Pizza Bhateja Bhateja</h5>
               </div>
             )}
           </div>

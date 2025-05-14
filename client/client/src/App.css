@@ -866,15 +866,16 @@ p {
   bottom: 1rem;
   left: 0;
   margin-top: 100px;
-  width: 100%;
+  width: 250px;
 }
 
 .profile-picture {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  margin-left: 3px;
   margin-right: 1rem;
-  border: 2px solid white;
+  border: 2px solid #fe7a7b;
 }
 
 .profile-details {
@@ -955,7 +956,7 @@ p {
   }
 
   .sidebar .logo{
-    height: 40px;
+    height: 39px;
   }
 
   .sidebar-menu li a{
@@ -977,23 +978,22 @@ p {
 
 
 .main-content{
-  margin-left: 100px;
+  padding-left: 100px;
 }
 
 @media (max-width: 480px) {
   .main-content{
-    margin-left:70px;
+    padding-left:70px;
   }
+
 }
-
-
 
 .search-bar{
   display: flex;
   background-color: black;
   border-radius: 30px;
   padding: 6px 15px;
-  color: #d2d2d2;
+  color: #b8b8b9;
   width: 200px;
   margin: 20px;
   position: fixed;
