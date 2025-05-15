@@ -1,11 +1,12 @@
+// src/Popup.jsx
 import React from "react";
 
-function Popup() {
-
-  return (<>
-    <h1>Hi</h1>
-  </>);
+export default function Popup() {
+  return (
+    <div style={{ padding: "12px", width: "250px", fontFamily: "Arial" }}>
+      <h2>Postify</h2>
+      <p>This extension helps you generate LinkedIn posts using AI.</p>
+      <p>Visit your dashboard to manage posts.</p>
+    </div>
+  );
 }
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<Popup />);

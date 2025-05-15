@@ -1,7 +1,7 @@
 import React from 'react'
 
 export default function App() {
-  return (
-  
-  )
+  return (<>
+  <h1>Hi</h1>
+  </>)
 }
