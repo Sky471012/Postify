@@ -828,15 +828,14 @@ p {
 
 .sidebar-menu li a {
   display: flex;
-  align-items: center;
-  padding: 10px;
+  padding: 10px 15px;
   text-decoration: none;
   color: #fff;
   transition: background-color 0.3s;
-  width: 100%;
   margin: 10px;
-  border-radius: 7px;
+  border-radius: 5px;
   font-size: 18px;
+  justify-content: left;
 }
 
 .sidebar-menu li a .menu-text {

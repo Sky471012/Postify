@@ -109,6 +109,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     // Re-enable the button
     const button = document.querySelector('#postify-generate-btn');
+    const input = document.querySelector('#postify-input');
     if (button) {
       button.disabled = false;
       button.textContent = '↑';

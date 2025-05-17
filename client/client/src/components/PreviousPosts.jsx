@@ -13,6 +13,7 @@ export default function PreviousPosts(props) {
 
     useEffect(() => {
       if (!userName) return;
+      console.log(userName);
 
       fetch(`http://localhost:5000/api/users/exists?name=${encodeURIComponent(userName)}`)
         .then((res) => {
@@ -31,7 +32,7 @@ export default function PreviousPosts(props) {
     }, [userName]);
 
     if (loading) return <p>Loading user data...</p>;
-    if (!user) return <p>User not found.</p>;
+    if (!user) return <h3 style={{color:"white", margin:"100px auto"}}>You had posted nothing with postify.</h3>;
 
     const toggleExpand = (index) => {
       setExpandedPosts((prev) => ({

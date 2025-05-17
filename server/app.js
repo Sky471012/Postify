@@ -32,7 +32,7 @@ app.get('/api/users/exists', async (req, res) => {
   const { name } = req.query;
 
   try {
-    const user = await User.findOne({ name });
+    const user = await User.findOne({ name: new RegExp(`^${name}$`, 'i') });
     if (user) {
       return res.json({ exists: true, user });
     } else {
