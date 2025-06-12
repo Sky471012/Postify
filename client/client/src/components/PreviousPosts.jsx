@@ -15,7 +15,7 @@ export default function PreviousPosts(props) {
       if (!userName) return;
       console.log(userName);
 
-      fetch(`http://localhost:5000/api/users/exists?name=${encodeURIComponent(userName)}`)
+      fetch(`https://postify-p4rq.onrender.com/api/users/exists?name=${encodeURIComponent(userName)}`)
         .then((res) => {
           if (!res.ok) throw new Error('User not found');
           return res.json();
