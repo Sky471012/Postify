@@ -1,0 +1,8 @@
+
+ After downloading:
+------------------------------------------------------------
+1. Unzip the file
+2. Go to "chrome://extensions";
+3. Enable "Developer mode";
+4. Click "Load unpacked";
+5. Select the unzipped folder.
