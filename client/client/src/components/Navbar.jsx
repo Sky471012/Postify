@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import logo1 from "../assets/images/logo-1.png";
 
 export default function Navbar() {
@@ -6,9 +6,10 @@ export default function Navbar() {
   const handleLongin=()=>{
     const params = new URLSearchParams({
       response_type: "code",
-      client_id: "864awrzg25madc",
+      client_id: import.meta.env.VITE_LINKEDIN_CLIENT_ID,
       redirect_uri: 'http://localhost:5000/api/linkedin/callback',
       scope: 'openid email profile w_member_social',
+      prompt: 'login',
     })
 
     window.location.href=`https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`;

@@ -5,8 +5,10 @@ import { Link } from "react-router-dom";
 import PreviousPosts from '../components/PreviousPosts';
 import { useUser } from "../context/UserContext";
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
   const [show, setShow] = useState(false);
@@ -30,30 +32,31 @@ export default function Dashboard() {
 
 
 
-  const { user } = useUser(); // Access the user data from context
+  const { user, setUserData } = useUser(); // Access the user data from context
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log("Dashboard mounted");
-    // Simulate loading state (if necessary)
-    if (user) {
-      setIsLoading(false);
-    } else {
-      // If user is not available in the context, check localStorage as fallback
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        setIsLoading(false);
-      }
+    const storedUser = localStorage.getItem("user");
+    if (!user && storedUser) {
+      setUserData(JSON.parse(storedUser));
     }
-  }, [user]);
+    setIsLoading(false);
+  }, [user, setUserData]);
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate("/");
+    }
+  }, [user, isLoading, navigate]);
 
-  if (!user) {
-    return <h3 style={{color:"white", margin:"auto"}}>Please post some generated posts first.</h3>;
-  }
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUserData(null);
+    window.location.href = "/";
+  };
+
 
 
 
@@ -73,7 +76,7 @@ export default function Dashboard() {
           </div>
           
           <div style={{display: "flex", flexDirection: "row", margin:"15px 15px 0", gap:"6px"}}>
-            <img src={logo1} className='logo tooltip-icon' alt="logo" />
+            <img src={logo1} className='logo' alt="logo" />
             {isOpen && (show && <h3 style={{fontSize: "40px", color:"white", marginBottom:"0"}}>Postify</h3>)}
           </div>
   
@@ -91,7 +94,7 @@ export default function Dashboard() {
               </a>
             </li>
             <li>
-              <a href="#" className="menu-item">
+              <a onClick={handleLogout} href="#" className="menu-item">
                 <i className="bi bi-door-open-fill"></i>
                 {isOpen && show && <span className="menu-text">Logout</span>}
               </a>
@@ -99,11 +102,11 @@ export default function Dashboard() {
             
           </ul>
           <div className="profile-section">
-            <img
+            {user?.picture && (<img
               className="profile-picture"
               src={user.picture}
               alt="Profile"
-            />
+            />)}
             {isOpen && show && (
               <div className="profile-details">
                 <h5 className="profile-name">{user.name}</h5>
@@ -120,7 +123,9 @@ export default function Dashboard() {
               
 
 
-        <PreviousPosts name={user.name} picture={user.picture}/>
+        {user?.name && user?.picture && (
+          <PreviousPosts name={user.name} picture={user.picture} />
+        )}
 
         
       </div>

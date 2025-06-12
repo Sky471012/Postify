@@ -60,7 +60,7 @@ export default function PreviousPosts(props) {
         .map((post, index) => {
           const isExpanded = expandedPosts[index];
           const preview = post.content.length > 142
-            ? post.content.slice(0, 142) + '...'
+            ? post.content.slice(0, 140) + '...'
             : post.content;
           return (
 
