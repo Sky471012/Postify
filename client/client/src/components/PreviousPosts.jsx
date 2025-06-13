@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import reactions from "../assets/images/reactions.png";
+import pfp from "../assets/images/pfp.jpg";
 
 export default function PreviousPosts(props) {
     const [search, setSearch] = useState('');
