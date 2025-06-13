@@ -106,6 +106,9 @@ export default function Dashboard() {
               className="profile-picture"
               src={user.picture}
               alt="Profile"
+              onError={(e) => {
+                e.target.src = {pfp}
+              }}
             />)}
             {isOpen && show && (
               <div className="profile-details">
