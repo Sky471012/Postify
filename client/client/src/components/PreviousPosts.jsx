@@ -79,7 +79,7 @@ export default function PreviousPosts(props) {
                 <div className="post">
                   <div className="profile">
                     <img className='profile-preview-img' src={userPicture} alt="img" onError={(e) => {
-                      e.target.src = {pfp};
+                      e.target.src = pfp;
                     }}/>
                     <div className="name">
                       <span style={{ fontSize: "1rem", fontWeight: "bold" }}>{userName}</span>

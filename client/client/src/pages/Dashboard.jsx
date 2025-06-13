@@ -107,7 +107,7 @@ export default function Dashboard() {
               src={user.picture}
               alt="Profile"
               onError={(e) => {
-                e.target.src = {pfp}
+                e.target.src = pfp
               }}
             />)}
             {isOpen && show && (
