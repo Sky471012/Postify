@@ -33,7 +33,7 @@ postify/
 │   │   ├── App.jsx
 │   │   └── App.css
 │   └── package.json
-
+│
 ├── extension/         # Chrome Extension
 │   ├── public/
 │   ├── src/
@@ -44,7 +44,7 @@ postify/
 │   ├── manifest.json
 │   ├── Background.js
 │   └── package.json
-
+│
 ├── server/            # Backend (Node.js + Express + MongoDB)
 │   ├── controller/
 │   ├── routes/
@@ -55,7 +55,7 @@ postify/
 │   ├── prompt.js
 │   ├── db.js
 │   └── package.json
-
+│
 ├── README.md
 ```
 

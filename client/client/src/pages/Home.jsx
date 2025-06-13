@@ -80,7 +80,7 @@ useEffect(() => {
                     <p className="text">
                       Create engaging LinkedIn posts effortlessly! Generate AI-powered content in your unique style, stay ahead with trending insights, and publish seamlessly—all in just a few clicks.
                     </p>
-                    <a href="javascript:void(0)" className="main-btn">
+                    <a href="https://github.com/Sky471012/Postify/releases/download/v1.0.0/postify-extension.zip" className="main-btn">
                       Get Extension
                     </a>
                   </div>
