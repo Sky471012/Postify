@@ -13,11 +13,7 @@ const app = express();
 app.use('/api/linkedin', AuthRoutes)
 
 // Configure CORS to allow requests from Chrome extension
-app.use(cors({
-  origin: '*', // During development, you can use * but tighten this for production
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors());
 
 app.use(express.json());
 
