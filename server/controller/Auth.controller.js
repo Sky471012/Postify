@@ -53,7 +53,7 @@ const linkedinCallback = async (req, res) => {
 
     // ✅ Redirect to your frontend with query params
     return res.redirect(
-      `http://localhost:5173/linkedin-redirect?name=${encodeURIComponent(name)}&picture=${encodeURIComponent(picture)}`
+      `https://postify-roan.vercel.app/linkedin-redirect?name=${encodeURIComponent(name)}&picture=${encodeURIComponent(picture)}`
     );
   } catch (error) {
     res.status(500).json({
