@@ -4,7 +4,7 @@ const getAccessToken = async (code) => {
     code: code,
     client_id: process.env.LINKEDIN_CLIENT_ID,
     client_secret: process.env.LINKEDIN_CLIENT_SECRET,
-    redirect_uri: "https://postify-p4rq.onrender.com/api/linkedin/callback",
+    redirect_uri: "http://localhost:5000/api/linkedin/callback",
   });
 
   const response = await fetch("https://www.linkedin.com/oauth/v2/accessToken", {
@@ -53,7 +53,7 @@ const linkedinCallback = async (req, res) => {
 
     // ✅ Redirect to your frontend with query params
     return res.redirect(
-      `https://postify-roan.vercel.app/linkedin-redirect?name=${encodeURIComponent(name)}&picture=${encodeURIComponent(picture)}`
+      `http://localhost:5173/linkedin-redirect?name=${encodeURIComponent(name)}&picture=${encodeURIComponent(picture)}`
     );
   } catch (error) {
     res.status(500).json({

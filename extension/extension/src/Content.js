@@ -38,14 +38,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           const postContent = post.textContent.trim();
 
 
-          fetch(`https://postify-p4rq.onrender.com/api/users/exists?name=${encodeURIComponent(userName)}`)
+          fetch(`https://postify-pd8m.onrender.com/api/users/exists?name=${encodeURIComponent(userName)}`)
           .then(res => res.json())
           .then(data => {
             if (data.exists) {
               console.log('User already exists, adding post...');
 
               // Add post to existing user
-              fetch('https://postify-p4rq.onrender.com/api/users/add-post', {
+              fetch('https://postify-pd8m.onrender.com/api/users/add-post', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
             } else {
               // Create new user with post
-              fetch('https://postify-p4rq.onrender.com/api/users/create', {
+              fetch('https://postify-pd8m.onrender.com/api/users/create', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'

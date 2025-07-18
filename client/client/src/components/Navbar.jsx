@@ -7,7 +7,7 @@ export default function Navbar() {
     const params = new URLSearchParams({
       response_type: "code",
       client_id: import.meta.env.VITE_LINKEDIN_CLIENT_ID,
-      redirect_uri: 'https://postify-p4rq.onrender.com/api/linkedin/callback',
+      redirect_uri: 'https://postify-pd8m.onrender.com/api/linkedin/callback',
       scope: 'openid email profile w_member_social',
       prompt: 'login',
     })
