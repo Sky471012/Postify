@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log("Sending request to backend with prompt:", request.prompt);
     
     // Check if server is reachable first
-    fetch('http://localhost:5000/', { 
+    fetch('https://postify-pd8m.onrender.com', { 
       method: 'GET',
       mode: 'cors'
     })
@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log("Server is reachable, proceeding with post generation");
       
       // Then handle the actual post generation request
-      return fetch('http://localhost:5000/api/generate', {
+      return fetch('https://postify-pd8m.onrender.com/api/generate', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
