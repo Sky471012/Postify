@@ -77,7 +77,7 @@ async function generateLinkedInPost(prompt) {
         "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: "llama3-70b-8192", // or llama3-8b-8192 for faster results
+        model: "llama-3.1-70b-versatile", // or llama3-8b-8192 for faster results
         messages: [
           { role: "system", content: prompt_template },
           { role: "user", content: prompt }
