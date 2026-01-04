@@ -3,11 +3,11 @@ import logo1 from "../assets/images/logo-1.png";
 
 export default function Navbar() {
 
-  const handleLongin=()=>{
+  const handleLogin=()=>{
     const params = new URLSearchParams({
       response_type: "code",
       client_id: import.meta.env.VITE_LINKEDIN_CLIENT_ID,
-      redirect_uri: 'https://postify-pd8m.onrender.com/api/linkedin/callback',
+      redirect_uri: `${import.meta.env.VITE_BACKEND_URL}/api/linkedin/callback`,
       scope: 'openid email profile w_member_social',
       prompt: 'login',
     })
@@ -132,7 +132,7 @@ export default function Navbar() {
                 <button
                   className="main-btn"
                   data-scroll-nav="0"
-                  onClick={handleLongin}
+                  onClick={()=>{handleLogin()}}
                   rel="nofollow"
                 >
                   Go to Dashboard
