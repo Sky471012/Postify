@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "Generate AI-powered LinkedIn posts",
   "permissions": ["scripting", "activeTab", "storage"],
-  "host_permissions": ["http://localhost:5000/", "https://api.groq.com/", "https://postify-p4rq.onrender.com/","https://postify-pd8m.onrender.com"],
+  "host_permissions": ["http://localhost:5000/", "https://api.groq.com/", "https://postify-p4rq.onrender.com/","https://postify-pd8m.onrender.com/"],
   "background": {
     "service_worker": "Background.js"
   },
