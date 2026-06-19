@@ -1,112 +1,92 @@
 console.log('[Postify] content script loaded');
 
-// --------------------------------------------
-// function to find place to add my input area
-// --------------------------------------------
-function waitForElement(selector, callback) {
-  // Fire immediately if it's already there (composer may open before observe starts)
-  const existing = document.querySelector(selector);
-  if (existing) callback(existing);
-
-  const observer = new MutationObserver(() => {
-    const target = document.querySelector(selector);
-    if (target) {
-      callback(target);
+// ----------------------------------------------------------------------------
+// LinkedIn renders the post composer inside an OPEN Shadow DOM, so plain
+// document.querySelector cannot reach any of its elements. Every lookup below
+// must pierce shadow roots via deepQuery().
+// ----------------------------------------------------------------------------
+function deepQuery(selector, root = document) {
+  const direct = root.querySelector(selector);
+  if (direct) return direct;
+  const nodes = root.querySelectorAll('*');
+  for (const node of nodes) {
+    if (node.shadowRoot) {
+      const found = deepQuery(selector, node.shadowRoot);
+      if (found) return found;
     }
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
+  }
+  return null;
 }
 
-// Toolbar at the bottom of the LinkedIn post composer.
-// NOTE: use a class selector (matches when the class is PRESENT), not [class="..."]
-// which requires an EXACT class-attribute match and breaks whenever LinkedIn
-// tweaks its markup.
-const TOOLBAR_SELECTOR = '.share-creation-state__additional-toolbar';
+// Resolve when `selector` appears (polls deepQuery). Resolves null if it never shows.
+function findEventually(selector, { tries = 40, interval = 250 } = {}) {
+  return new Promise((resolve) => {
+    let n = 0;
+    const tick = () => {
+      const el = deepQuery(selector);
+      if (el) return resolve(el);
+      if (++n >= tries) return resolve(null);
+      setTimeout(tick, interval);
+    };
+    tick();
+  });
+}
+
+// The emoji lives in .share-creation-state__additional-toolbar; we mount the
+// Postify UI right above it, inside the same toolbar group.
+const ANCHOR_SELECTOR = '.share-creation-state__additional-toolbar';
+
+// Run the injector after DOM activity. A MutationObserver only sees the root it
+// observes — but LinkedIn keeps a persistent shadow host and rebuilds the composer
+// INSIDE its shadow root, which the light-DOM observer can't see (that was the lag
+// on reopen). So we observe the light DOM up front and additionally observe the
+// composer's shadow root once we find it. After any activity we burst-poll for
+// ~1.5s to catch the shadow content filling in.
+const observedRoots = new WeakSet();
+let kickWatcher = () => {};
+
+function observeRoot(root) {
+  if (!root || observedRoots.has(root)) return;
+  observedRoots.add(root);
+  new MutationObserver(() => kickWatcher()).observe(root, { childList: true, subtree: true });
+}
+
+function startComposerWatcher(inject) {
+  let burstUntil = 0;
+  let timer = null;
+  const burst = () => {
+    inject();
+    if (performance.now() < burstUntil) {
+      timer = setTimeout(burst, 120);
+    } else {
+      timer = null;
+    }
+  };
+  kickWatcher = () => {
+    burstUntil = performance.now() + 1500;
+    if (!timer) burst();
+  };
+  observeRoot(document.documentElement);
+  kickWatcher();
+}
 
 // Set up message listener for background script responses
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("Content script received message:", message);
-  
+
   if (message.action === 'postGenerated') {
     const generatedPost = message.generatedPost;
-    const postBox = document.querySelector('[contenteditable="true"][role="textbox"]');
+    const postBox = deepQuery('[contenteditable="true"][role="textbox"]');
 
-    //finding post button
-    const selector = '.share-actions__primary-action.artdeco-button.artdeco-button--2.artdeco-button--primary.ember-view'
-    const observer = new MutationObserver(() => {
-      const targetElement = document.querySelector(selector);
+    // Save the post to the backend when the user clicks LinkedIn's Post button
+    attachPostSaveListener();
 
-      if (targetElement) {
-        
-        
-        targetElement.addEventListener('click', () => {
-          
-          const userNameElement = document.querySelector('.text-body-large-bold.truncate');
-          const userName = userNameElement.textContent.trim();
-          
-          const postElement = document.querySelector('[role="textbox"]');
-          const post = postElement.querySelector('p');
-          const postContent = post.textContent.trim();
-
-
-          fetch(`https://postify-pd8m.onrender.com/api/users/exists?name=${encodeURIComponent(userName)}`)
-          .then(res => res.json())
-          .then(data => {
-            if (data.exists) {
-              console.log('User already exists, adding post...');
-
-              // Add post to existing user
-              fetch('https://postify-pd8m.onrender.com/api/users/add-post', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  name: userName,
-                  post: postContent
-                })
-              })
-                .then(res => res.json())
-                .then(data => console.log('Post added to user:', data))
-                .catch(err => console.error('Error adding post:', err));
-
-            } else {
-              // Create new user with post
-              fetch('https://postify-pd8m.onrender.com/api/users/create', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  name: userName,
-                  post: postContent
-                })
-              })
-                .then(res => res.json())
-                .then(data => console.log('User created!'))
-                .catch(err => console.error('Error creating user!'));
-            }
-          })
-          .catch(err => console.error('Error checking user existence:', err));
-        });
-      }
-      observer.disconnect();
-    
-    })
-    observer.observe(document.body, { childList: true, subtree: true });
-
-
-
-    
     if (postBox) {
-      postBox.innerHTML = '';
-      postBox.focus();
       insertTextIntoContentEditable(postBox, generatedPost);
-      
+
       // Re-enable the button
-      const button = document.querySelector('#postify-generate-btn');
-      const input = document.querySelector('#postify-input');
+      const button = deepQuery('#postify-generate-btn');
+      const input = deepQuery('#postify-input');
       if (button && input) {
         button.disabled = false;
         button.textContent = '↑';
@@ -115,38 +95,95 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else {
       alert('Could not find the LinkedIn post area.');
     }
-  } 
+  }
   else if (message.action === 'postGenerationFailed') {
     alert('Error generating post: ' + (message.error || 'Unknown error'));
-    
+
     // Re-enable the button
-    const button = document.querySelector('#postify-generate-btn');
-    const input = document.querySelector('#postify-input');
+    const button = deepQuery('#postify-generate-btn');
+    const input = deepQuery('#postify-input');
     if (button) {
       button.disabled = false;
       button.textContent = '↑';
-      input.placeholder = 'Generate with Postify......';
+      if (input) input.placeholder = 'Generate with Postify......';
     }
   }
 });
 
+// Attach a one-time click listener on LinkedIn's "Post" button to persist the post.
+function attachPostSaveListener() {
+  findEventually('.share-actions__primary-action').then((postBtn) => {
+    if (!postBtn || postBtn.dataset.postifyBound) return;
+    postBtn.dataset.postifyBound = '1';
 
-// Inject Postify UI next to LinkedIn's detour button
-waitForElement(TOOLBAR_SELECTOR, (targetElement) => {
-  if (document.getElementById('postify-container')) return;
-  console.log('[Postify] toolbar found, injecting UI');
+    postBtn.addEventListener('click', () => {
+      const userNameElement = deepQuery('.text-body-large-bold.truncate');
+      const editor = deepQuery('[role="textbox"]');
+      if (!userNameElement || !editor) return;
 
+      const userName = userNameElement.textContent.trim();
+      // Quill stores each line as its own <p>, so read ALL paragraphs (not just the
+      // first) and join with newlines; fall back to innerText/textContent.
+      const blocks = editor.querySelectorAll('p');
+      const postContent = (blocks.length
+        ? Array.from(blocks).map(p => p.textContent).join('\n')
+        : (editor.innerText || editor.textContent)
+      ).trim();
+
+      fetch(`https://postify-pd8m.onrender.com/api/users/exists?name=${encodeURIComponent(userName)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.exists) {
+            console.log('User already exists, adding post...');
+            fetch('https://postify-pd8m.onrender.com/api/users/add-post', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: userName, post: postContent })
+            })
+              .then(res => res.json())
+              .then(data => console.log('Post added to user:', data))
+              .catch(err => console.error('Error adding post:', err));
+          } else {
+            fetch('https://postify-pd8m.onrender.com/api/users/create', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: userName, post: postContent })
+            })
+              .then(res => res.json())
+              .then(() => console.log('User created!'))
+              .catch(err => console.error('Error creating user!'));
+          }
+        })
+        .catch(err => console.error('Error checking user existence:', err));
+    });
+  });
+}
+
+// Ensure the ::placeholder style lives in the same root (shadow) as the input.
+function ensurePlaceholderStyle(mount) {
+  const root = mount.getRootNode();
+  if (root.querySelector('#postify-style')) return;
+  const style = document.createElement('style');
+  style.id = 'postify-style';
+  style.textContent = `#postify-input::placeholder { color: white; opacity: 0.5; }`;
+  (root.head || root).appendChild(style);
+}
+
+// Build the Postify input row (logo + prompt input + generate button).
+function buildPostifyRow() {
   const container = document.createElement('div');
   container.id = 'postify-container';
   container.style.display = 'flex';
+  container.style.width = '100%';
+  container.style.boxSizing = 'border-box';
   container.style.gap = '8px';
-  container.style.marginTop = '8px';
+  container.style.marginBottom = '8px';
   container.style.border = '1.5px solid #fe7a7b';
   container.style.alignItems = 'center';
   container.style.justifyContent = 'space-around';
   container.style.borderRadius = '50px';
   container.style.padding = '10px';
-  container.style.backgroundColor= '#1d2430';
+  container.style.backgroundColor = '#1d2430';
 
   const logo = document.createElement('img');
   logo.id = 'postify-logo';
@@ -156,7 +193,7 @@ waitForElement(TOOLBAR_SELECTOR, (targetElement) => {
   }
   logo.style.height = '35px';
   logo.style.margin = '0';
-  
+
   const input = document.createElement('input');
   input.id = 'postify-input';
   input.type = 'text';
@@ -168,15 +205,6 @@ waitForElement(TOOLBAR_SELECTOR, (targetElement) => {
   input.style.outline = 'none';
   input.style.color = 'white';
   input.style.backgroundColor = '#1d2430';
-  const style = document.createElement('style');
-  style.textContent = `
-    #postify-input::placeholder {
-      color: white;
-      opacity: 0.5;
-    }
-  `;
-  document.head.appendChild(style);
-
 
   const button = document.createElement('button');
   button.id = 'postify-generate-btn';
@@ -193,18 +221,18 @@ waitForElement(TOOLBAR_SELECTOR, (targetElement) => {
   button.onclick = () => {
     const prompt = input.value.trim();
     if (!prompt) return alert('Please enter a prompt.');
-    
+
     button.disabled = true;
     button.textContent = '→';
-    input.value="";
+    input.value = "";
     input.placeholder = 'Generating......';
-    
+
     // Send message to background script
     chrome.runtime.sendMessage(
       { action: 'generatePost', prompt },
       (response) => {
-        // This only confirms the message was received
-        // The actual result will come through the message listener
+        // This only confirms the message was received;
+        // the actual result arrives through the message listener.
         if (!response) {
           console.error("No response from background script");
           button.disabled = false;
@@ -215,69 +243,93 @@ waitForElement(TOOLBAR_SELECTOR, (targetElement) => {
       }
     );
   };
-  
+
   container.appendChild(logo);
   container.appendChild(input);
   container.appendChild(button);
-  targetElement.parentElement.appendChild(container);
-});
+  return container;
+}
+
+// Inject the Postify UI right above the emoji toolbar, in the same group.
+// Idempotent + self-healing: the watcher calls this repeatedly; the isConnected
+// check keeps it cheap once mounted, and it re-injects if LinkedIn wipes it.
+let postifyRowEl = null;
+function injectPostifyUI() {
+  if (postifyRowEl && postifyRowEl.isConnected) return; // already present — cheap path
+  postifyRowEl = null;
+
+  const anchor = deepQuery(ANCHOR_SELECTOR);
+  if (!anchor || !anchor.parentElement) return;
+  const parent = anchor.parentElement;
+
+  // Observe the composer's shadow root so reopening it (a shadow-internal rebuild,
+  // invisible to the light-DOM observer) kicks the watcher and re-injects fast.
+  observeRoot(anchor.getRootNode());
+
+  ensurePlaceholderStyle(anchor);
+  console.log('[Postify] injecting UI');
+
+  const container = buildPostifyRow();
+  parent.insertBefore(container, anchor); // directly above the emoji row
+  postifyRowEl = container;
+
+  // Format buttons go just under the Postify row, above the emoji
+  const editContainer = buildEditButtons();
+  container.insertAdjacentElement('afterend', editContainer);
+}
+
+startComposerWatcher(injectPostifyUI);
 
 
 // --------------------------------------------
 // .........Function to find text-box----------
 // --------------------------------------------
 function insertTextIntoContentEditable(element, text) {
-  // Focus the element first
+  // LinkedIn's editor is Quill, which keeps its own model — directly mutating the
+  // DOM (textContent / inserting nodes) gets reverted. Drive it via execCommand so
+  // the beforeinput/input events Quill listens to fire normally.
   element.focus();
-  
-  // Get the current selection
-  const selection = window.getSelection();
-  
-  // Check if there's a selection range
-  if (selection.rangeCount > 0) {
-    // Get the first range
-    const range = selection.getRangeAt(0);
-    
-    // Delete any currently selected content
-    range.deleteContents();
-    
-    // Create a text node with the content to insert
-    const textNode = document.createTextNode(text);
-    
-    // Insert the text node
-    range.insertNode(textNode);
-    
-    // Move the cursor to the end of the inserted text
-    range.setStartAfter(textNode);
-    range.setEndAfter(textNode);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  } else {
-    // If no selection range, just append the text to the element
-    element.textContent += text;
-  }
-  
-  // Trigger an input event to ensure LinkedIn registers the change
-  const inputEvent = new InputEvent('input', {
+
+  // Selection lives on the shadow root in Chrome; fall back to window selection.
+  const root = element.getRootNode();
+  const selection = (root.getSelection && root.getSelection()) || window.getSelection();
+
+  // Select the editor's current contents (the empty <p><br></p>) so insertText replaces it.
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  const inserted = document.execCommand('insertText', false, text);
+  if (inserted) return; // execCommand fires the input events itself
+
+  // Fallback: manual insertion + synthetic input event
+  range.deleteContents();
+  const textNode = document.createTextNode(text);
+  range.insertNode(textNode);
+  range.setStartAfter(textNode);
+  range.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  element.dispatchEvent(new InputEvent('input', {
     bubbles: true,
     cancelable: true,
     inputType: 'insertText',
     data: text
-  });
-  element.dispatchEvent(inputEvent);
+  }));
 }
 
 
 // --------------------------------------------
 // .........Adding edit buttons----------------
 // --------------------------------------------
-waitForElement(TOOLBAR_SELECTOR, (targetElement) => {
-  if (document.getElementById('editContainer')) return;
+function buildEditButtons() {
   const editContainer = document.createElement('div');
   editContainer.id = 'editContainer';
   editContainer.style.display = 'flex';
   editContainer.style.gap = '30px';
   editContainer.style.marginRight = '20px';
+  editContainer.style.marginBottom = '8px';
   editContainer.style.alignItems = 'center';
   editContainer.style.justifyContent = 'flex-start';
 
@@ -294,58 +346,37 @@ waitForElement(TOOLBAR_SELECTOR, (targetElement) => {
     btn.onclick = clickHandler;
     return btn;
   }
-  
-// SVG Icons
-const boldIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M6 4h8a4 4 0 010 8H6zm0 8h9a4 4 0 010 8H6z" stroke="white" stroke-width="2"/>
-                  </svg>`;
 
-const italicIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M19 4h-9m5 0l-6 16m-4 0h9" stroke="white" stroke-width="2"/>
+  // SVG Icons
+  const boldIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M6 4h8a4 4 0 010 8H6zm0 8h9a4 4 0 010 8H6z" stroke="white" stroke-width="2"/>
                     </svg>`;
 
-// const bulletIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-//                       <circle cx="5" cy="6" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="18" r="2"/>
-//                       <line x1="10" y1="6" x2="21" y2="6" stroke="black" stroke-width="2"/>
-//                       <line x1="10" y1="12" x2="21" y2="12" stroke="black" stroke-width="2"/>
-//                       <line x1="10" y1="18" x2="21" y2="18" stroke="black" stroke-width="2"/>
-//                     </svg>`;
-
-// const numberIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-//                       <text x="2" y="8" font-size="6" font-family="sans-serif" fill="black">1.</text>
-//                       <text x="2" y="14" font-size="6" font-family="sans-serif" fill="black">2.</text>
-//                       <text x="2" y="20" font-size="6" font-family="sans-serif" fill="black">3.</text>
-//                       <line x1="10" y1="6" x2="21" y2="6" stroke="black" stroke-width="2"/>
-//                       <line x1="10" y1="12" x2="21" y2="12" stroke="black" stroke-width="2"/>
-//                       <line x1="10" y1="18" x2="21" y2="18" stroke="black" stroke-width="2"/>
-//                     </svg>`;
-
+  const italicIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 4h-9m5 0l-6 16m-4 0h9" stroke="white" stroke-width="2"/>
+                      </svg>`;
 
   const boldButton = createFormatButton(boldIcon, 'Bold text', () => applyFormatting('bold'));
   const italicButton = createFormatButton(italicIcon, 'Italic text', () => applyFormatting('italic'));
-  // const bulletButton = createFormatButton(bulletIcon, 'Bullet list', () => applyFormatting('bulletList'));
-  // const numberButton = createFormatButton(numberIcon, 'Numbered list', () => applyFormatting('numberList'));
-
 
   editContainer.appendChild(boldButton);
   editContainer.appendChild(italicButton);
-  // editContainer.appendChild(bulletButton);
-  // editContainer.appendChild(numberButton);
-
-  targetElement.appendChild(editContainer);
-})
+  return editContainer;
+}
 
 
 // Function to apply formatting to selected text in LinkedIn post box
 function applyFormatting(format) {
-  const postBox = document.querySelector('[contenteditable="true"][role="textbox"]');
+  const postBox = deepQuery('[contenteditable="true"][role="textbox"]');
   if (!postBox) {
     alert('Post box not found. Please click inside the LinkedIn post editor.');
     return;
   }
 
   postBox.focus();
-  const selection = window.getSelection();
+  // In a shadow tree, the selection lives on the shadow root in Chrome.
+  const root = postBox.getRootNode();
+  const selection = (root.getSelection && root.getSelection()) || window.getSelection();
   if (!selection || selection.rangeCount === 0) return;
 
   const range = selection.getRangeAt(0);
