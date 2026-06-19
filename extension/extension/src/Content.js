@@ -1,7 +1,13 @@
+console.log('[Postify] content script loaded');
+
 // --------------------------------------------
 // function to find place to add my input area
 // --------------------------------------------
 function waitForElement(selector, callback) {
+  // Fire immediately if it's already there (composer may open before observe starts)
+  const existing = document.querySelector(selector);
+  if (existing) callback(existing);
+
   const observer = new MutationObserver(() => {
     const target = document.querySelector(selector);
     if (target) {
@@ -11,6 +17,12 @@ function waitForElement(selector, callback) {
 
   observer.observe(document.body, { childList: true, subtree: true });
 }
+
+// Toolbar at the bottom of the LinkedIn post composer.
+// NOTE: use a class selector (matches when the class is PRESENT), not [class="..."]
+// which requires an EXACT class-attribute match and breaks whenever LinkedIn
+// tweaks its markup.
+const TOOLBAR_SELECTOR = '.share-creation-state__additional-toolbar';
 
 // Set up message listener for background script responses
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -120,8 +132,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 
 // Inject Postify UI next to LinkedIn's detour button
-waitForElement('[class="share-creation-state__additional-toolbar share-creation-state__additional-toolbar--no-padding"]', (targetElement) => {
+waitForElement(TOOLBAR_SELECTOR, (targetElement) => {
   if (document.getElementById('postify-container')) return;
+  console.log('[Postify] toolbar found, injecting UI');
 
   const container = document.createElement('div');
   container.id = 'postify-container';
@@ -137,7 +150,10 @@ waitForElement('[class="share-creation-state__additional-toolbar share-creation-
 
   const logo = document.createElement('img');
   logo.id = 'postify-logo';
-  logo.src = chrome.runtime.getURL('src/assets/logo.png');
+  // Guard against an orphaned/invalidated extension context (returns chrome-extension://invalid/)
+  if (chrome.runtime?.id) {
+    logo.src = chrome.runtime.getURL('src/assets/logo.png');
+  }
   logo.style.height = '35px';
   logo.style.margin = '0';
   
@@ -255,7 +271,7 @@ function insertTextIntoContentEditable(element, text) {
 // --------------------------------------------
 // .........Adding edit buttons----------------
 // --------------------------------------------
-waitForElement('[class="share-creation-state__additional-toolbar share-creation-state__additional-toolbar--no-padding"]', (targetElement) => {
+waitForElement(TOOLBAR_SELECTOR, (targetElement) => {
   if (document.getElementById('editContainer')) return;
   const editContainer = document.createElement('div');
   editContainer.id = 'editContainer';
