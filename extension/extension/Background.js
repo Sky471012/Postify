@@ -1,3 +1,5 @@
+import { API_URL } from "./src/config";
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'generatePost') {
     // Immediately acknowledge receipt of message to keep connection alive
@@ -7,7 +9,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log("Sending request to backend with prompt:", request.prompt);
     
     // Check if server is reachable first
-    fetch('https://postify-pd8m.onrender.com', { 
+    fetch(`${API_URL}`, { 
       method: 'GET',
       mode: 'cors'
     })
@@ -18,7 +20,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log("Server is reachable, proceeding with post generation");
       
       // Then handle the actual post generation request
-      return fetch('https://postify-pd8m.onrender.com/api/generate', {
+      return fetch(`${API_URL}/api/generate`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

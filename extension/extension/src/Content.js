@@ -1,3 +1,4 @@
+const API_URL = "https://postify-pd8m.onrender.com";
 console.log('[Postify] content script loaded');
 
 // ----------------------------------------------------------------------------
@@ -130,12 +131,12 @@ function attachPostSaveListener() {
         : (editor.innerText || editor.textContent)
       ).trim();
 
-      fetch(`https://postify-pd8m.onrender.com/api/users/exists?name=${encodeURIComponent(userName)}`)
+      fetch(`${API_URL}/api/users/exists?name=${encodeURIComponent(userName)}`)
         .then(res => res.json())
         .then(data => {
           if (data.exists) {
             console.log('User already exists, adding post...');
-            fetch('https://postify-pd8m.onrender.com/api/users/add-post', {
+            fetch(`${API_URL}/api/users/add-post`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ name: userName, post: postContent })
@@ -144,7 +145,7 @@ function attachPostSaveListener() {
               .then(data => console.log('Post added to user:', data))
               .catch(err => console.error('Error adding post:', err));
           } else {
-            fetch('https://postify-pd8m.onrender.com/api/users/create', {
+            fetch(`${API_URL}/api/users/create`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ name: userName, post: postContent })
