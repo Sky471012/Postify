@@ -33,9 +33,8 @@ function findEventually(selector, { tries = 40, interval = 250 } = {}) {
   });
 }
 
-// The emoji lives in .share-creation-state__additional-toolbar; we mount the
-// Postify UI right above it, inside the same toolbar group.
-const ANCHOR_SELECTOR = '.share-creation-state__additional-toolbar';
+// Mount the Postify input above LinkedIn's toolbar.
+const ANCHOR_SELECTOR = 'span.artdeco-hoverable-trigger.artdeco-hoverable-trigger--content-placed-top.ember-view:has(button[title="Open Emoji Keyboard"])';
 
 // Run the injector after DOM activity. A MutationObserver only sees the root it
 // observes — but LinkedIn keeps a persistent shadow host and rebuilds the composer
@@ -176,6 +175,7 @@ function buildPostifyRow() {
   container.id = 'postify-container';
   container.style.display = 'flex';
   container.style.width = '100%';
+  container.style.maxWidth = '100%';
   container.style.boxSizing = 'border-box';
   container.style.gap = '8px';
   container.style.marginBottom = '8px';
@@ -219,7 +219,7 @@ function buildPostifyRow() {
   button.style.minWidth = '35px';
   button.style.cursor = 'pointer';
 
-  button.onclick = () => {
+  const generatePost = () => {
     const prompt = input.value.trim();
     if (!prompt) return alert('Please enter a prompt.');
 
@@ -245,13 +245,21 @@ function buildPostifyRow() {
     );
   };
 
+  button.onclick = generatePost;
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      generatePost();
+    }
+  });
+
   container.appendChild(logo);
   container.appendChild(input);
   container.appendChild(button);
   return container;
 }
 
-// Inject the Postify UI right above the emoji toolbar, in the same group.
+// Inject the Postify input above the emoji and format buttons beside it.
 // Idempotent + self-healing: the watcher calls this repeatedly; the isConnected
 // check keeps it cheap once mounted, and it re-injects if LinkedIn wipes it.
 let postifyRowEl = null;
@@ -261,7 +269,8 @@ function injectPostifyUI() {
 
   const anchor = deepQuery(ANCHOR_SELECTOR);
   if (!anchor || !anchor.parentElement) return;
-  const parent = anchor.parentElement;
+  const toolbar = anchor.closest('.share-creation-state__additional-toolbar');
+  if (!toolbar) return;
 
   // Observe the composer's shadow root so reopening it (a shadow-internal rebuild,
   // invisible to the light-DOM observer) kicks the watcher and re-injects fast.
@@ -271,12 +280,21 @@ function injectPostifyUI() {
   console.log('[Postify] injecting UI');
 
   const container = buildPostifyRow();
-  parent.insertBefore(container, anchor); // directly above the emoji row
+  container.style.display = 'flex';
+  container.style.float = 'none';
+  container.style.clear = 'both';
+  toolbar.insertAdjacentElement('beforebegin', container); // input above the entire toolbar
   postifyRowEl = container;
 
-  // Format buttons go just under the Postify row, above the emoji
+  // Add the formatting controls as a separate element beside the emoji.
   const editContainer = buildEditButtons();
-  container.insertAdjacentElement('afterend', editContainer);
+  editContainer.style.flex = '0 0 auto';
+  editContainer.style.marginBottom = '0';
+  const actionsParent = anchor.parentElement;
+  actionsParent.style.display = 'flex';
+  actionsParent.style.alignItems = 'center';
+  actionsParent.style.flexWrap = 'nowrap';
+  anchor.insertAdjacentElement('afterend', editContainer);
 }
 
 startComposerWatcher(injectPostifyUI);
@@ -327,38 +345,36 @@ function insertTextIntoContentEditable(element, text) {
 function buildEditButtons() {
   const editContainer = document.createElement('div');
   editContainer.id = 'editContainer';
-  editContainer.style.display = 'flex';
-  editContainer.style.gap = '30px';
+  editContainer.style.display = 'inline-flex';
+  editContainer.style.verticalAlign = 'start';
+  editContainer.style.gap = '8px';
   editContainer.style.marginRight = '20px';
-  editContainer.style.marginBottom = '8px';
+  editContainer.style.marginBottom = '0';
   editContainer.style.alignItems = 'center';
   editContainer.style.justifyContent = 'flex-start';
 
-  function createFormatButton(iconSVG, tooltip, clickHandler) {
+  function createFormatButton(iconSrc, tooltip, clickHandler) {
     const btn = document.createElement('button');
-    btn.innerHTML = iconSVG;
     btn.title = tooltip;
-    btn.style.padding = '4px 8px';
-    btn.style.borderRadius = '4px';
+    btn.style.padding = '0';
     btn.style.cursor = 'pointer';
-    btn.style.background = '#3b3b3b';
-    btn.style.color = 'white';
+    btn.style.background = 'none';
     btn.style.border = 'none';
     btn.onclick = clickHandler;
+
+    const icon = document.createElement('img');
+    icon.src = chrome.runtime.getURL(iconSrc);
+    icon.alt = tooltip;
+    icon.style.width = '24px';
+    icon.style.height = '24px';
+    icon.style.display = 'block';
+    btn.appendChild(icon);
+
     return btn;
   }
 
-  // SVG Icons
-  const boldIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M6 4h8a4 4 0 010 8H6zm0 8h9a4 4 0 010 8H6z" stroke="white" stroke-width="2"/>
-                    </svg>`;
-
-  const italicIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M19 4h-9m5 0l-6 16m-4 0h9" stroke="white" stroke-width="2"/>
-                      </svg>`;
-
-  const boldButton = createFormatButton(boldIcon, 'Bold text', () => applyFormatting('bold'));
-  const italicButton = createFormatButton(italicIcon, 'Italic text', () => applyFormatting('italic'));
+  const boldButton = createFormatButton('src/assets/bold.png', 'Bold text', () => applyFormatting('bold'));
+  const italicButton = createFormatButton('src/assets/italic.png', 'Italic text', () => applyFormatting('italic'));
 
   editContainer.appendChild(boldButton);
   editContainer.appendChild(italicButton);
@@ -420,7 +436,9 @@ const boldMap = {
   a: '𝗮', b: '𝗯', c: '𝗰', d: '𝗱', e: '𝗲', f: '𝗳', g: '𝗴',
   h: '𝗵', i: '𝗶', j: '𝗷', k: '𝗸', l: '𝗹', m: '𝗺', n: '𝗻',
   o: '𝗼', p: '𝗽', q: '𝗾', r: '𝗿', s: '𝘀', t: '𝘁', u: '𝘂',
-  v: '𝘃', w: '𝘄', x: '𝘅', y: '𝘆', z: '𝘇'
+  v: '𝘃', w: '𝘄', x: '𝘅', y: '𝘆', z: '𝘇',
+  0: '𝟬', 1: '𝟭', 2: '𝟮', 3: '𝟯', 4: '𝟰',
+  5: '𝟱', 6: '𝟲', 7: '𝟳', 8: '𝟴', 9: '𝟵'
 };
 
 const italicMap = {
@@ -431,5 +449,8 @@ const italicMap = {
   a: '𝘢', b: '𝘣', c: '𝘤', d: '𝘥', e: '𝘦', f: '𝘧', g: '𝘨',
   h: '𝘩', i: '𝘪', j: '𝘫', k: '𝘬', l: '𝘭', m: '𝘮', n: '𝘯',
   o: '𝘰', p: '𝘱', q: '𝘲', r: '𝘳', s: '𝘴', t: '𝘵', u: '𝘶',
-  v: '𝘷', w: '𝘸', x: '𝘹', y: '𝘺', z: '𝘻'
+  v: '𝘷', w: '𝘸', x: '𝘹', y: '𝘺', z: '𝘻',
+  // Unicode does not provide italic mathematical digits; leave them unchanged.
+  0: '0', 1: '1', 2: '2', 3: '3', 4: '4',
+  5: '5', 6: '6', 7: '7', 8: '8', 9: '9'
 };

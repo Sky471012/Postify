@@ -27,7 +27,11 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["src/assets/logo.png"],
+      "resources": [
+        "src/assets/logo.png",
+        "src/assets/bold.png",
+        "src/assets/italic.png"
+      ],
       "matches": ["<all_urls>"]
     }
   ]
