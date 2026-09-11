@@ -10,8 +10,7 @@
     "https://postify-p4rq.onrender.com/*",
     "https://postify-pd8m.onrender.com/*"],
   "background": {
-    "service_worker": "Background.js",
-    "type": "module"
+    "service_worker": "Background.js"
   },
   "action": {
     "default_popup": "popup.html",

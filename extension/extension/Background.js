@@ -1,4 +1,4 @@
-import { API_URL } from "./src/config";
+const API_URL = "https://postify-pd8m.onrender.com";
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'generatePost') {
