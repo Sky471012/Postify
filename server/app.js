@@ -17,9 +17,13 @@ app.use(cors());
 
 app.use(express.json());
 
-// Health check endpoint
+// Health check endpoints
 app.get('/', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Postify backend running' });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'online', message: 'Postify backend is online' });
 });
 
 mongoDB();
