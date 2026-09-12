@@ -94,6 +94,17 @@ export default function Dashboard() {
               </a>
             </li>
             <li>
+              <a
+                href="https://github.com/Sky471012/Postify"
+                className="menu-item"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i className="bi bi-github"></i>
+                {isOpen && show && <span className="menu-text">GitHub</span>}
+              </a>
+            </li>
+            <li>
               <a onClick={handleLogout} href="#" className="menu-item">
                 <i className="bi bi-door-open-fill"></i>
                 {isOpen && show && <span className="menu-text">Logout</span>}

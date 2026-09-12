@@ -488,6 +488,30 @@ p {
   margin-top: 40px;
 }
 
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-actions .main-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hero-actions .repo-btn {
+  background: linear-gradient(to right, #fe8464 0%, #fe6e9a 50%, #fe8464 100%);
+  background-size: 200%;
+}
+
+.hero-actions .repo-btn:hover {
+  background-position: right center;
+}
+
 .header-hero-image {
   padding-top: 45px;
 }

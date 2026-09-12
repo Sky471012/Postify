@@ -6,6 +6,7 @@ import working_img from "../assets/images/working.png";
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Features from '../components/Features';
+import { FaGithub } from 'react-icons/fa';
 
 export default function Home() {
 
@@ -80,9 +81,16 @@ useEffect(() => {
                     <p className="text">
                       Create engaging LinkedIn posts effortlessly! Generate AI-powered content in your unique style, stay ahead with trending insights, and publish seamlessly—all in just a few clicks.
                     </p>
-                    <a href="https://github.com/Sky471012/Postify/releases/download/v1.0.1/postify-extension.zip" className="main-btn">
-                      Get Extension
-                    </a>
+                    <div className="hero-actions">
+                      <a href="https://github.com/Sky471012/Postify" className="main-btn repo-btn" target="_blank" rel="noreferrer">
+                        <FaGithub aria-hidden="true" />
+                        GitHub Repository
+                      </a>
+                      <a href="https://github.com/Sky471012/Postify/releases/download/v1.0.1/postify-extension.zip" className="main-btn">
+                        <i class="bi bi-download"></i>
+                        Get Extension
+                      </a>
+                    </div>
                   </div>
                 </div>
                 {/* <!-- header hero content --> */}
