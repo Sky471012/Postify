@@ -395,6 +395,15 @@ p {
   background-position: right center;
 }
 
+.navbar-btn .dashboard-button-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  vertical-align: middle;
+}
+
 .sticky .navbar-toggler .toggler-icon {
   background-color: #2e2e2e;
 }

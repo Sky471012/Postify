@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import logo1 from "../assets/images/logo-1.png";
+import dashboardIcon from "../assets/images/dashboard.png";
 
 export default function Navbar() {
 
@@ -135,6 +136,7 @@ export default function Navbar() {
                   onClick={()=>{handleLogin()}}
                   rel="nofollow"
                 >
+                  <img className="dashboard-button-icon" src={dashboardIcon} alt="" />
                   Go to Dashboard
                 </button>
               </div>

@@ -1,0 +1,233 @@
+:root {
+  color-scheme: dark;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  background: #121723;
+  color: #f7f9fc;
+}
+
+* {
+  box-sizing: border-box;
+}
+.dashboard-button-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+body {
+  width: 360px;
+  min-height: 500px;
+  margin: 0;
+  overflow: hidden;
+  background: #121723;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.popup-shell {
+  min-height: 500px;
+  padding: 20px;
+  background:
+    radial-gradient(
+      circle at 92% 4%,
+      rgba(51, 200, 193, 0.18),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 4% 100%,
+      rgba(254, 110, 154, 0.12),
+      transparent 30%
+    ),
+    #121723;
+}
+
+.popup-hero {
+  position: relative;
+  padding: 2px 2px 20px;
+}
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-lockup img.popup-logo {
+  display: block;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.eyebrow,
+.card-label {
+  margin: 0;
+  color: #75ddd8;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+.brand-lockup h1 {
+  margin: 1px 0 0;
+  color: #fff;
+  font-size: 25px;
+  letter-spacing: -0.5px;
+}
+.status-dot {
+  position: absolute;
+  top: 8px;
+  right: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #33c8c1;
+  box-shadow: 0 0 0 5px rgba(51, 200, 193, 0.12);
+}
+.hero-copy {
+  max-width: 275px;
+  margin: 17px 0 0;
+  color: #aab3c5;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.action-card {
+  padding: 16px;
+  border: 1px solid rgba(117, 221, 216, 0.18);
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(35, 51, 67, 0.94),
+    rgba(25, 32, 46, 0.94)
+  );
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+.action-card h2 {
+  margin: 7px 0 5px;
+  color: #fff;
+  font-size: 17px;
+}
+.action-card p {
+  margin: 0 0 15px;
+  color: #9ca8ba;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.popup-shell a.primary-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100% !important;
+  padding: 10px 12px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: linear-gradient(to right, #fe8464 0%, #fe6e9a 50%, #fe8464 100%) !important;
+  background-size: 200% !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+.popup-shell a.primary-action:hover {
+  background-position: right center !important;
+}
+.primary-action span {
+  font-size: 17px;
+}
+
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+.link-grid a {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 12px;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 76px;
+  padding: 10px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  background: #1d2430;
+  transform: none;
+  transition: none;
+}
+.link-grid a:hover {
+  border-color: rgba(254, 132, 100, 0.55);
+  transform: none;
+}
+.link-grid a:hover .icon-base {
+  transform: rotate(25deg);
+}
+.link-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 17px;
+  font-weight: 700;
+  transform: none;
+  transition: none;
+}
+.link-icon .icon-base,
+.link-icon .icon-shape {
+  position: absolute;
+  max-width: none;
+  object-fit: contain;
+  filter: none;
+  transition: transform 0.4s ease-out;
+}
+.link-icon .icon-base {
+  width: 44px;
+  height: 44px;
+  transform: none;
+}
+.link-icon .icon-shape {
+  width: 34px;
+  height: 34px;
+}
+.link-icon .icon-art {
+  position: relative;
+  display: block;
+  width: 16px;
+  height: 16px;
+  line-height: 1;
+  filter: invert(1);
+}
+.linkedin-icon,
+.home-icon,
+.download-icon,
+.github-icon {
+  font-size: 16px;
+}
+.link-grid strong,
+.link-grid small {
+  display: block;
+}
+.link-grid strong {
+  color: #f4f6fa;
+  font-size: 12px;
+}
+.link-grid small {
+  margin-top: 2px;
+  color: #8591a5;
+  font-size: 10px;
+}
+.popup-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 17px;
+  color: #9fa5b1;
+  font-size: 10px;
+}
+.version {
+  color: #fe8464;
+}
